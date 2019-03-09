@@ -13,7 +13,25 @@ class Buffer:
 
     def process(self, request):
         # write your code here
-        return Response(False, -1)
+        self.remove(request)
+
+        if len(self.finish_time) <= self.size:
+            endTime = self.calcEndTime(request)
+            self.finish_time.insert(0, endTime)
+            return Response(False, request.arrived_at)
+        else:
+            return Response(True, -1)
+
+    def remove(self, request):
+        processedPacket = True
+        while processedPacket is True:
+            if len(self.finish_time) > 0 and request.arrived_at > self.finish_time[0]:
+                self.finish_time.pop(0)
+            else:
+                processedPacket = False;
+    
+    def calcEndTime(self, request):
+        return request.arrived_at + request.time_to_process
 
 
 def process_requests(requests, buffer):
